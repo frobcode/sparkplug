@@ -23,3 +23,11 @@ script:
 
 notifications:
   email: false
+
+deploy:
+  provider: pypi
+  user: "dev"
+  password:
+    secure: hhWdxzLRdBsSs0AxnDeQmqK9TLcod3eFBO0clumEoe92/y3Z86yhqjh9Y5zsElcbaqx9g5LYclnQTr/8uZZETGcnIx1cTVpMOerf6mN3Zq6GmX1vkxlbeF+vnw9aGZzeKKNBX3VzbgWxftAn/epOB41POXpQc4TrD01tYmaD+dI=
+  on:
+    tags: true
