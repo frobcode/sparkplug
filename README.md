@@ -8,4 +8,10 @@ Sparkplug is a lightweight AMQP message consumer. It allows you to specify queue
 run tests with `nosetests`
 
 ## Releasing
-To create a new release commit run `./bump.sh`. When your branch is merged with master, a new release will be automatically run.
+To create a new release commit run:
+```bash
+./bump.sh
+git push origin master
+git push --tags
+```
+A new release will be automatically generated on the tag build.
