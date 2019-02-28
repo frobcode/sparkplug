@@ -15,7 +15,9 @@ setup(
     use_scm_version=True,
     author='Owen Jacobson',
     author_email='owen.jacobson@grimoire.ca',
-    url='https://github.com/ojacobson/sparkplug/',
+    maintainer='Freshbooks',
+    maintainer_email='dev@freshbooks.com',
+    url='https://github.com/freshbooks/sparkplug/',
     download_url='https://pypi.python.org/pypi/sparkplug/',
     description='An AMQP message consumer daemon',
 
