@@ -13,7 +13,6 @@ with open(p.join(p.dirname(__file__), 'requirements-dev.txt'), 'r') as reqs:
 setup(
     name='sparkplug',
     use_scm_version=True,
-    author='Owen Jacobson',
     maintainer='FreshBooks',
     maintainer_email='dev@freshbooks.com',
     url='https://github.com/freshbooks/sparkplug/',
