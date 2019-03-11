@@ -12,7 +12,7 @@ with open(p.join(p.dirname(__file__), 'requirements-dev.txt'), 'r') as reqs:
 
 setup(
     name='sparkplug',
-    version='1.10.2',
+    version='1.10.3',
     author='Owen Jacobson',
     author_email='owen.jacobson@grimoire.ca',
     url='http://alchemy.grimoire.ca/python/sites/sparkplug/',
