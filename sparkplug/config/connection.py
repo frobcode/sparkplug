@@ -52,6 +52,11 @@ class AMQPConnector(object):
         self.reconnect_delay = int(reconnect_delay)
         self.connection_args = dict(kwargs)
         convert(self.connection_args, 'ssl', parse_bool)
+        convert(self.connection_args, 'heartbeat', int)
+
+        if 'heartbeat' not in self.connection_args:
+            self.connection_args['heartbeat'] = 60
+
         self.channel_configurer = channel_configurer
 
     def run_channel(self, channel):
