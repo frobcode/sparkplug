@@ -26,8 +26,8 @@ notifications:
 
 deploy:
   provider: pypi
-  user: "dev"
+  user: freshbooks
   password:
-    secure: hhWdxzLRdBsSs0AxnDeQmqK9TLcod3eFBO0clumEoe92/y3Z86yhqjh9Y5zsElcbaqx9g5LYclnQTr/8uZZETGcnIx1cTVpMOerf6mN3Zq6GmX1vkxlbeF+vnw9aGZzeKKNBX3VzbgWxftAn/epOB41POXpQc4TrD01tYmaD+dI=
+    secure: iQ7ZvO8KxJEjCeCXj962n4LuYFy4XCtnJ2GSmsMtKfFmDEUQtz/U1WfxxCddIO2nuQyoxemziVEF++bzzpxpul7gioyuOzVIKL3nRIsWtOvwwCO9Pp+qy8pCdqrQd8Wim0vUcmyoAU90jvSjCfR1RwMA8Nc6ar7ilIM5JdFDIMM=
   on:
     tags: true
