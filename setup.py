@@ -12,10 +12,10 @@ with open(p.join(p.dirname(__file__), 'requirements-dev.txt'), 'r') as reqs:
 
 setup(
     name='sparkplug',
-    version='1.11.0',
+    use_scm_version=True,
     author='Owen Jacobson',
     author_email='owen.jacobson@grimoire.ca',
-    url='http://alchemy.grimoire.ca/python/sites/sparkplug/',
+    url='https://github.com/ojacobson/sparkplug/',
     download_url='https://pypi.python.org/pypi/sparkplug/',
     description='An AMQP message consumer daemon',
 
@@ -34,6 +34,7 @@ setup(
 
     packages=find_packages(exclude=['*.test', '*.test.*']),
 
+    setup_requires=['setuptools_scm'],
     tests_require=tests_require,
     install_requires=install_requires,
 

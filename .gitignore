@@ -4,3 +4,4 @@
 /build/
 /dist/
 /sparkplug.pid
+/.eggs/
