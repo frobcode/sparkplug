@@ -13,9 +13,9 @@ with open(p.join(p.dirname(__file__), 'requirements-dev.txt'), 'r') as reqs:
 setup(
     name='sparkplug',
     use_scm_version=True,
-    author='Owen Jacobson',
-    author_email='owen.jacobson@grimoire.ca',
-    url='https://github.com/ojacobson/sparkplug/',
+    maintainer='FreshBooks',
+    maintainer_email='dev@freshbooks.com',
+    url='https://github.com/freshbooks/sparkplug/',
     download_url='https://pypi.python.org/pypi/sparkplug/',
     description='An AMQP message consumer daemon',
 
