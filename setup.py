@@ -12,7 +12,7 @@ with open(p.join(p.dirname(__file__), 'requirements-dev.txt'), 'r') as reqs:
 
 setup(
     name='sparkplug',
-    version='1.11.1',
+    version='1.11.2',
     maintainer='FreshBooks',
     maintainer_email='dev@freshbooks.com',
     url='https://github.com/freshbooks/sparkplug/',
