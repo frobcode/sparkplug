@@ -59,20 +59,24 @@ class AMQPConnector(object):
 
         self.channel_configurer = channel_configurer
 
-    def run_channel(self, channel):
+    def run_channel(self, connection, channel):
         _log.debug("Configuring channel elements.")
         self.channel_configurer.start(channel)
         try:
-            self.pump(channel)
+            self.pump(connection, channel)
         except (SystemExit, KeyboardInterrupt):
             _log.debug("Tearing down connection.")
             self.channel_configurer.stop(channel)
             raise
 
-    def pump(self, channel):
+    def pump(self, connection, channel):
         while True:
             _log.debug("Waiting for a message.")
-            channel.wait(spec.Basic.Deliver)
+            try:
+                channel.wait(spec.Basic.Deliver, timeout=connection.heartbeat)
+            except socket.timeout :
+                if connection.heartbeat:
+                    connection.send_heartbeat() # overkill: should be able to use heartbeat_tick()
 
     def run(self):
         while True:
@@ -80,7 +84,8 @@ class AMQPConnector(object):
                 _log.debug("Connecting to broker.")
                 with amqp.Connection(**self.connection_args) as connection:
                     with connection.channel() as channel:
-                        self.run_channel(channel)
+                        self.run_channel(connection, channel)
+
             except (SystemExit, KeyboardInterrupt):
                 return
             except (IOError, socket.error):
