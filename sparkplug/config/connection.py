@@ -43,6 +43,7 @@ import socket
 from sparkplug.config.types import convert, parse_bool
 from sparkplug.logutils import LazyLogger
 from amqp import spec
+from . import heartbeater
 
 _log = LazyLogger(__name__)
 
@@ -55,7 +56,7 @@ class AMQPConnector(object):
         convert(self.connection_args, 'heartbeat', int)
 
         if 'heartbeat' not in self.connection_args:
-            self.connection_args['heartbeat'] = 60
+            self.connection_args['heartbeat'] = 10
 
         self.channel_configurer = channel_configurer
 
@@ -70,19 +71,21 @@ class AMQPConnector(object):
             raise
 
     def pump(self, connection, channel):
-        while True:
-            _log.debug("Waiting for a message.")
-            try:
-                channel.wait(spec.Basic.Deliver, timeout=connection.heartbeat)
-            except socket.timeout :
-                if connection.heartbeat:
-                    connection.send_heartbeat() # overkill: should be able to use heartbeat_tick()
+        heartbeat = heartbeater.Heartbeater( connection )
+        try:
+            with heartbeat:
+                while True:
+                    _log.debug("Waiting for a message.")
+                    channel.wait(spec.Basic.Deliver)
+        finally:
+            heartbeat.teardown()
 
     def run(self):
         while True:
             try:
                 _log.debug("Connecting to broker.")
                 with amqp.Connection(**self.connection_args) as connection:
+                    connection.connect() # populate properties
                     with connection.channel() as channel:
                         self.run_channel(connection, channel)
 

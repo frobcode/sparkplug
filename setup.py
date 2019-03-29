@@ -12,7 +12,7 @@ with open(p.join(p.dirname(__file__), 'requirements-dev.txt'), 'r') as reqs:
 
 setup(
     name='sparkplug',
-    version='1.11.2',
+    version='1.11.3',
     maintainer='FreshBooks',
     maintainer_email='dev@freshbooks.com',
     url='https://github.com/freshbooks/sparkplug/',
@@ -52,7 +52,8 @@ setup(
         ],
         'sparkplug.consumers': [
             'echo = sparkplug.examples:EchoConsumer',
-            'broken = sparkplug.examples:Broken'
+            'broken = sparkplug.examples:Broken',
+            'heartbeat = sparkplug.test.test_heartbeat.heartbeat_consumer:HeartbeatConsumer'
         ]
     },
 
