@@ -1,6 +1,6 @@
 from __future__ import with_statement
 
-from configparser import SafeConfigParser
+from configparser import ConfigParser
 import optparse
 import logging
 import logging.config
@@ -81,11 +81,11 @@ def sparkplug_options(args):
 def collate_configs(filenames, defaults):
     _log.debug("Loading configuration files: %r", filenames)
 
-    config = SafeConfigParser(defaults)
+    config = ConfigParser(defaults)
 
     for filename in filenames:
         with open(filename, 'r') as config_file:
-            config.readfp(config_file)
+            config.read_file(config_file)
 
     return config
 
