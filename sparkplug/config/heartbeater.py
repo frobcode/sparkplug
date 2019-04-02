@@ -27,6 +27,7 @@ class _HeartbeatThread(threading.Thread):
                 except:
                     _log.debug( "Failed to send heartbeat.")
                     self._end.set()
+                    break # while
         _log.debug( "Heartbeat thread is shutting down")
 
 
@@ -69,8 +70,13 @@ class Heartbeater( object ):
 
     def new_timer( self ):
         if self._timer :
-            self._timer.terminate()
+            paused = self._timer_pause.is_set() # push state
+            # set events so thread ends:
+            self._timer_pause.set()
+            self._timer_end.set()
             self._timer.join()
+            if not paused:
+                self._timer_pause.clear() # pop state
         self._timer_end.clear()
         self._timer = _HeartbeatThread( self._connection, self._timer_pause, self._timer_end )
         self._timer.start()
