@@ -15,6 +15,7 @@ test-all : tests
 	# Do more extensive heartbeat testing:
 	# You can monitor rabbitmq in a web browser on http://127.0.0.1:15672 using guest/guest
 	# Since consumer is hard to kill, we schedule the OS to take the swarm down after 8 minutes
+	# TCP drops are probable because we flood the local machine, which is probably not configured for server traffic.
 	echo "docker-compose down -v --remove-orphans" | at now + 8 minutes
 	docker-compose up
 

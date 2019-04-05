@@ -52,6 +52,8 @@ A complete example is included in the sparkplug source.
 import pkg_resources
 from sparkplug.config import DependencyConfigurer
 from sparkplug.logutils import LazyLogger
+from sparkplug.config.timer import Timer
+
 
 _log = LazyLogger(__name__)
 
@@ -62,7 +64,7 @@ def parse_use(group, use, load_entry_point=pkg_resources.load_entry_point):
     first ``'#'`` into a ``dist, name`` pair. Then we pass the whole lot
     to the ``load_entry_point`` callback (using the same protocol as
     ``pkg_resources.load_entry_point``) and return whatever we get back.
-    
+
     :param group: the entry point group to load from.
     :param use: the un-parsed ``use`` string.
     :param load_entry_point: the function that will actually load entry points.
@@ -74,7 +76,7 @@ def parse_use(group, use, load_entry_point=pkg_resources.load_entry_point):
 class ConsumerConfigurer(DependencyConfigurer):
     """Handles per-channel setup and teardown for consumer blocks in the
     sparkplug config file.
-    
+
     :param name: the name of the consumer section.
     :param configurer: the configuration builder to configure with
         callbacks.
@@ -88,19 +90,23 @@ class ConsumerConfigurer(DependencyConfigurer):
         self.entry_point = self.parse_use('sparkplug.consumers', use)
         self.queue = queue
         self.consumer_params = kwargs
-        
+
         self.depends_on(queue)
-    
+
     def start(self, channel):
         _log.debug("Creating consumer from %r", self.entry_point)
         consumer = self.entry_point(channel, **self.consumer_params)
-        
+
+        # Wrap the original consumer with a callable to
+        # report timing information:
+        consumer = Timer( consumer )
+
         _log.debug("Consuming from queue %s", self.queue)
         channel.basic_consume(callback=consumer, queue=self.queue)
 
     def stop(self, channel):
         pass
-    
+
     parse_use = staticmethod(parse_use)
 
     def __repr__(self):
