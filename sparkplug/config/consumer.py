@@ -52,8 +52,7 @@ A complete example is included in the sparkplug source.
 import pkg_resources
 from sparkplug.config import DependencyConfigurer
 from sparkplug.logutils import LazyLogger
-from sparkplug.config.timer import Timer
-
+import sparkplug.config.timer
 
 _log = LazyLogger(__name__)
 
@@ -89,9 +88,22 @@ class ConsumerConfigurer(DependencyConfigurer):
         DependencyConfigurer.__init__(self)
         self.entry_point = self.parse_use('sparkplug.consumers', use)
         self.queue = queue
+
         self.consumer_params = kwargs
 
+        # timerreporters are optional, but calling this is not optional:
+        self._init_reporters()
+
         self.depends_on(queue)
+
+
+    def _init_reporters( self ):
+        self.time_reporters = []
+        if 'time_reporters' in self.consumer_params:
+            self.time_reporters = [ x.strip() for x in self.consumer_params['time_reporters'].split(',') ]
+            for name in self.time_reporters:
+                self.depends_on(name)
+            del self.consumer_params['time_reporters']
 
     def start(self, channel):
         _log.debug("Creating consumer from %r", self.entry_point)
@@ -99,7 +111,7 @@ class ConsumerConfigurer(DependencyConfigurer):
 
         # Wrap the original consumer with a callable to
         # report timing information:
-        consumer = Timer( consumer )
+        consumer = sparkplug.config.timer.Timer( consumer, self.time_reporters )
 
         _log.debug("Consuming from queue %s", self.queue)
         channel.basic_consume(callback=consumer, queue=self.queue)

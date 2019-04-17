@@ -2,7 +2,7 @@
 version: '3'
 services:
   rabbitmq:
-    image: "rabbitmq:3.6-management-alpine"
+    image: "sparkplug_tester_rmq:latest"
     ports:
       # The standard AMQP protocol port
       - '5672:5672'

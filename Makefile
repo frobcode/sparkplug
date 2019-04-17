@@ -3,9 +3,15 @@ wheel:
 	python setup.py sdist bdist_wheel
 	ls -1 dist/*
 
-tester: wheel
+tester: image_serv image_cons
+	true
+
+image_serv:
+	docker build -f Dockerfile.serv -t sparkplug_tester_rmq:latest .
+
+image_cons: wheel
 	$(eval WHEELFILE=$(shell basename `ls -1 dist/*whl | tail -1`)) # get latest wheel
-	docker build --build-arg sparkplug_wheel=${WHEELFILE} -t sparkplug_tester:latest .
+	docker build -f Dockerfile.cons --build-arg sparkplug_wheel=${WHEELFILE} -t sparkplug_tester:latest .
 
 tests: tester
 	# Run standard unit tests:

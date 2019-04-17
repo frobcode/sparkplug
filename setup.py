@@ -45,6 +45,7 @@ setup(
             'connection = sparkplug.config.connection:AMQPConnector'
         ],
         'sparkplug.configurers': [
+            'time_reporter = sparkplug.config.timereporter:TimeReporterConfigurer',
             'queue = sparkplug.config.queue:QueueConfigurer',
             'exchange = sparkplug.config.exchange:ExchangeConfigurer',
             'binding = sparkplug.config.binding:BindingConfigurer',
@@ -54,6 +55,10 @@ setup(
             'echo = sparkplug.examples:EchoConsumer',
             'broken = sparkplug.examples:Broken',
             'heartbeat = sparkplug.test.test_heartbeat.heartbeat_consumer:HeartbeatConsumer'
+        ],
+        'sparkplug.time_reporters' : [
+            'logger = sparkplug.timereporters.logger:Logger',
+            'ddstatsd = sparkplug.timereporters.ddstatsd:DDStatsd',
         ]
     },
 
