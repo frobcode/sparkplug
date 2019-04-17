@@ -1,0 +1,17 @@
+FROM rabbitmq:3.6-management-alpine
+# FROM rabbitmq:3.7-management-alpine
+
+#
+# install rabbitmq_message_timestamp plugin for the correct rabbitmq version:
+#
+
+RUN wget https://dl.bintray.com/rabbitmq/community-plugins/3.6.x/rabbitmq_message_timestamp/rabbitmq_message_timestamp-20171215-3.6.x.zip
+# RUN wget https://dl.bintray.com/rabbitmq/community-plugins/3.7.x/rabbitmq_message_timestamp/rabbitmq_message_timestamp-20170830-3.7.x.zip
+
+RUN unzip rabbitmq_message_timestamp-20171215-3.6.x.zip
+# RUN unzip rabbitmq_message_timestamp-20170830-3.7.x.zip
+
+RUN mv rabbitmq_message_timestamp-20171215-3.6.x.ez /opt/rabbitmq/plugins/
+# RUN mv rabbitmq_message_timestamp-20170830-3.7.x.ez /opt/rabbitmq/plugins/
+
+RUN rabbitmq-plugins enable rabbitmq_message_timestamp
