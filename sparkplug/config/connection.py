@@ -49,7 +49,8 @@ _log = LazyLogger(__name__)
 
 
 class AMQPConnector(object):
-    def __init__(self, name, channel_configurer, reconnect_delay='10', **kwargs):
+    def __init__(self, name, channel_configurer, reconnect_delay='10', qos=24, **kwargs):
+        self.qos = int(qos)
         self.reconnect_delay = int(reconnect_delay)
         self.connection_args = dict(kwargs)
         convert(self.connection_args, 'ssl', parse_bool)
@@ -86,7 +87,11 @@ class AMQPConnector(object):
                 _log.debug("Connecting to broker.")
                 with amqp.Connection(**self.connection_args) as connection:
                     connection.connect() # populate properties
-                    with connection.channel() as channel:
+                    channel = connection.channel()
+                    # you risk dropped tcp connections due to buffer overflow without setting qos:
+                    _log.debug("Applying qos: {}".format(self.qos))
+                    channel.basic_qos(0, self.qos, False)
+                    with channel:
                         self.run_channel(connection, channel)
 
             except (SystemExit, KeyboardInterrupt):
