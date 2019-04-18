@@ -23,18 +23,18 @@ class Logger( sparkplug.timereporters.base.Base ):
         if len( self.exec ) >= self.aggregation_count :
             mn, md, mx = sparkplug.timereporters.base.mn_md_mx( self.exec )
             del self.exec[:]
-            self.logger( "msg exec: {:0.2f} ms".format( md ))
+            self.logger( "msg exec (min med max) ms: {:0.2f} {:0.2f} {:0.2f}".format( mn, md, mx ))
 
     def append_erro( self, delta ):
         self.erro.append( delta )
         if len( self.erro ) >= self.aggregation_count :
             mn, md, mx = sparkplug.timereporters.base.mn_md_mx( self.erro )
             del self.erro[:]
-            self.logger( "msg erro: {:0.2f} ms".format( md ))
+            self.logger( "msg erro (min med max) ms: {:0.2f} {:0.2f} {:0.2f}".format( mn, md, mx ))
 
     def append_wait( self, delta ):
         self.wait.append( delta )
         if len( self.wait ) >= self.aggregation_count :
             mn, md, mx = sparkplug.timereporters.base.mn_md_mx( self.wait )
             del self.wait[:]
-            self.logger( "msg wait: {:0.2f} ms".format( md ))
+            self.logger( "msg wait (min med max) ms: {:0.2f} {:0.2f} {:0.2f}".format( mn, md, mx ))
