@@ -33,11 +33,11 @@ def parse_use(group, use, load_entry_point=pkg_resources.load_entry_point):
     return load_entry_point(dist, group, entry_point)
 
 
-class TimeReporterConfigurer ( DependencyConfigurer ):
+class TimeReporterConfigurer(DependencyConfigurer):
     def __init__(self, name, use, aggregation_count, **kwargs):
         DependencyConfigurer.__init__(self)
         self.entry_point = parse_use('sparkplug.time_reporters', use)
-        self.aggregation_count = max( int(aggregation_count),1)
+        self.aggregation_count = max(int(aggregation_count),1)
         self.name = name
         self.kwargs = kwargs
 
@@ -45,11 +45,11 @@ class TimeReporterConfigurer ( DependencyConfigurer ):
         # instance the plugin and add it to the global registry:
         try:
             _log.debug("Creating time_reporter from %r", self.entry_point)
-            registry[ self.name ] = self.entry_point( self.aggregation_count, **(self.kwargs) )
+            registry[self.name] = self.entry_point(self.aggregation_count, **(self.kwargs))
         except:
-            _log.error( "Failure to start time_reporter %r", self.entry_point)
-            _log.error( traceback.format_exc() )
+            _log.error("Failure to start time_reporter %r", self.entry_point)
+            _log.error(traceback.format_exc())
 
     def stop(self, channel):
         if self.name in registry :
-           del registry[ self.name ]
+           del registry[self.name]
