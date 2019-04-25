@@ -16,3 +16,5 @@ git push origin master
 git push --tags
 ```
 A new release will be automatically generated on the tag build.
+
+⚠️⚠️⚠️ Version 11.2 is the last version that is Python 2 compatible ⚠️⚠️⚠️
