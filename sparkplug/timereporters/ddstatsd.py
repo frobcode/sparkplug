@@ -7,7 +7,7 @@ interfering with the main consumer thread
 from sparkplug.logutils import LazyLogger
 _log = LazyLogger(__name__)
 
-from sparkplug.timereporters.base import Base, mn_md_mx
+from sparkplug.timereporters.base import Base, min_median_max
 
 try:
     # pip install datadog
@@ -44,21 +44,21 @@ try:
         def append_exec(self, delta):
             self.exec.append(delta)
             if len(self.exec) >= self.aggregation_count :
-                mn, md, mx = mn_md_mx(self.exec)
+                mn, md, mx = min_median_max(self.exec)
                 del self.exec[:]
                 self.statsd.timing('sparkplug.msg.exec', md, tags=self.tags)
 
         def append_erro(self, delta):
             self.erro.append(delta)
             if len(self.erro) >= self.aggregation_count :
-                mn, md, mx = mn_md_mx(self.erro)
+                mn, md, mx = min_median_max(self.erro)
                 del self.erro[:]
                 self.statsd.timing('sparkplug.msg.erro', md, tags=self.tags)
 
         def append_wait(self, delta):
             self.wait.append(delta)
             if len(self.wait) >= self.aggregation_count :
-                mn, md, mx = mn_md_mx(self.wait)
+                mn, md, mx = min_median_max(self.wait)
                 del self.wait[:]
                 self.statsd.timing('sparkplug.msg.wait', md, tags=self.tags)
 

@@ -8,7 +8,7 @@ def _milliseconds(timedelta):
 
 ##################################################
 
-def mn_md_mx(x):
+def min_median_max(x):
     "calculate min median max from a list of timedeltas, returns the time in milliseconds"
     mn = 0
     median = 0

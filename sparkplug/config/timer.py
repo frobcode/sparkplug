@@ -14,6 +14,8 @@ class Timer(object):
 
 
     def __call__(self, msg):
+        ret = None
+        
         try:
             start_time = datetime.datetime.now()
             if hasattr(msg, "application_headers") and ("timestamp_in_ms" in msg.application_headers):

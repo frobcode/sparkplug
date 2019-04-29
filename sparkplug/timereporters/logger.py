@@ -4,7 +4,7 @@ Sends timing information to the logs
 
 import logging
 from sparkplug.logutils import LazyLogger
-from sparkplug.timereporters.base import Base, mn_md_mx
+from sparkplug.timereporters.base import Base, min_median_max
 
 _log = LazyLogger(__name__)
 
@@ -21,20 +21,20 @@ class Logger(Base):
     def append_exec(self, delta):
         self._exec_times.append(delta)
         if len(self._exec_times) >= self.aggregation_count :
-            mn, md, mx = mn_md_mx(self._exec_times)
+            mn, md, mx = min_median_max(self._exec_times)
             del self._exec_times[:]
             self.logger("msg exec (min med max) ms: {:0.2f} {:0.2f} {:0.2f}".format(mn, md, mx))
 
     def append_erro(self, delta):
         self._erro_times.append(delta)
         if len(self._erro_times) >= self.aggregation_count :
-            mn, md, mx = mn_md_mx(self._erro_times)
+            mn, md, mx = min_median_max(self._erro_times)
             del self._erro_times[:]
             self.logger("msg erro (min med max) ms: {:0.2f} {:0.2f} {:0.2f}".format(mn, md, mx))
 
     def append_wait(self, delta):
         self._wait_times.append(delta)
         if len(self._wait_times) >= self.aggregation_count :
-            mn, md, mx = mn_md_mx(self._wait_times)
+            mn, md, mx = min_median_max(self._wait_times)
             del self._wait_times[:]
             self.logger("msg wait (min med max) ms: {:0.2f} {:0.2f} {:0.2f}".format(mn, md, mx))
