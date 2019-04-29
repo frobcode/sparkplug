@@ -1,7 +1,33 @@
+"""Heartbeater Class
+=========================
+
+Heartbeater replaces the frame_writer on a connection
+and wraps it so that the frame_writer callable is
+locked.  It also adds locking to the read and write
+methods on the transport held by the connection.
+
+The Heartbeater is implemented as a context manager
+to start and pause sending of heartbeats from
+the consumer to the rabbitmq master.  The heartbeats
+are sent from a sidecar thread, hence the need
+for locking on the transport and frame_writer callables.
+
+The connection could be used outside the context of
+the heartbeater, so messages could be processed without
+the heartbeater; but heartbeats will obviously not get
+sent to the master.
+
+Be sure to call teardown() to take down
+the thread that was created when the Heartbeater
+was instanced.  The thread persists even outside the
+context of the heartbeater, when sending
+heartbeats is paused.
+
+"""
+
 import threading
 import time
 
-from functools import wraps
 from sparkplug.logutils import LazyLogger
 
 _log = LazyLogger(__name__)
@@ -32,7 +58,9 @@ class _HeartbeatThread(threading.Thread):
 
 
 def _locked_call( lock, fn ):
-    @wraps( fn )
+    # In an ideal world, we'd functool.wraps here,
+    # but this complicates python 2.7 support and
+    # isn't offering a lot of benefit in this context.
     def locked_fn( *args, **kwargs ):
         with lock:
             r = fn( *args, **kwargs )

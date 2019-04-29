@@ -2,7 +2,7 @@
 version: '3'
 services:
   rabbitmq:
-    image: "rabbitmq:3.6-management-alpine"
+    image: "sparkplug_tester_rmq:latest"
     ports:
       # The standard AMQP protocol port
       - '5672:5672'
@@ -26,7 +26,7 @@ services:
     depends_on:
       - "rabbitmq"
       - "cons"
-    command: ["sh", "-c", "sleep 20; python3 /app/sparkplug/test/test_heartbeat/publish_msgs.py"]
+    command: ["sh", "-c", "sleep 20; python /app/sparkplug/test/test_heartbeat/publish_msgs.py"]
     networks:
       - sparkplug_test_net
 networks:

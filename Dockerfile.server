@@ -1,0 +1,16 @@
+FROM rabbitmq:3.7-management-alpine
+
+# more logging please:
+RUN echo "log.console = true" >> /etc/rabbitmq/rabbitmq.conf
+RUN echo "log.console.level = debug" >> /etc/rabbitmq/rabbitmq.conf
+
+# okay to use guest account remotely:
+RUN echo "loopback_users = none" >> /etc/rabbitmq/rabbitmq.conf
+
+#
+# install rabbitmq_message_timestamp plugin for the correct rabbitmq version:
+#
+RUN wget https://dl.bintray.com/rabbitmq/community-plugins/3.7.x/rabbitmq_message_timestamp/rabbitmq_message_timestamp-20170830-3.7.x.zip
+RUN unzip rabbitmq_message_timestamp-20170830-3.7.x.zip
+RUN mv rabbitmq_message_timestamp-20170830-3.7.x.ez /opt/rabbitmq/plugins/
+RUN rabbitmq-plugins enable rabbitmq_message_timestamp
