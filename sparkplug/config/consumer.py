@@ -103,6 +103,8 @@ class ConsumerConfigurer(DependencyConfigurer):
             self.time_reporters = [ x.strip() for x in self.consumer_params['time_reporters'].split(',') ]
             for name in self.time_reporters:
                 self.depends_on(name)
+            # We want to avoid sending extra parameters to consumer
+            # entry points that are not expecting them:
             del self.consumer_params['time_reporters']
 
     def start(self, channel):

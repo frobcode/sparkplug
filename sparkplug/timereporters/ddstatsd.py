@@ -22,6 +22,10 @@ try:
             super().__init__(aggregation_count)
             global is_initialized
             if not is_initialized:
+                # Datadog docs are unclear whether initializing twice would be an issue.
+                # Examples initialize in the scope of the module, which we can't
+                # do because we don't have our keys yet.
+                # Taking a safe position of not making the assumption that it's okay.
                 initialize(api_key=api_key, app_key=app_key)
                 is_initialized = True
             self.exec = []

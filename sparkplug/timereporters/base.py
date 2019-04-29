@@ -3,7 +3,7 @@ import datetime
 ##################################################
 
 def _milliseconds(timedelta):
-    return timedelta / datetime.timedelta( microseconds=1000 )
+    return timedelta / datetime.timedelta(microseconds=1000)
 
 
 ##################################################
@@ -18,7 +18,7 @@ def mn_md_mx(x):
         ordered = sorted(x)
         mn = _milliseconds(ordered[0])
         mx = _milliseconds(ordered[-1])
-        if lenx & 0x01 :
+        if 1 == lenx % 2 :
             # odd number of samples
             median = _milliseconds(ordered[lenx // 2])
         else:
