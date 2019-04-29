@@ -1,6 +1,12 @@
 from __future__ import with_statement
 
-from configparser import ConfigParser
+try:
+    from configparser import ConfigParser
+except ImportError:
+    # patch support for python 2.7
+    import configparter.SafeConfigParser as ConfigParser
+    ConfigParser.read_file = ConfigParser.readfp
+
 import optparse
 import logging
 import logging.config

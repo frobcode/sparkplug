@@ -19,7 +19,7 @@ try:
 
     class DDStatsd(Base):
         def __init__(self, aggregation_count, api_key, app_key, tags=None):
-            super().__init__(aggregation_count)
+            super(DDStatsd, self).__init__(aggregation_count)
             global is_initialized
             if not is_initialized:
                 # Datadog docs are unclear whether initializing twice would be an issue.

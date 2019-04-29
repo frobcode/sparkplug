@@ -3,7 +3,7 @@ import datetime
 ##################################################
 
 def _milliseconds(timedelta):
-    return timedelta / datetime.timedelta(microseconds=1000)
+    return timedelta.total_seconds() * 1000
 
 
 ##################################################

@@ -28,7 +28,6 @@ heartbeats is paused.
 import threading
 import time
 
-from functools import wraps
 from sparkplug.logutils import LazyLogger
 
 _log = LazyLogger(__name__)
@@ -59,7 +58,9 @@ class _HeartbeatThread(threading.Thread):
 
 
 def _locked_call( lock, fn ):
-    @wraps( fn )
+    # In an ideal world, we'd functool.wraps here,
+    # but this complicates python 2.7 support and
+    # isn't offering a lot of benefit in this context.
     def locked_fn( *args, **kwargs ):
         with lock:
             r = fn( *args, **kwargs )
