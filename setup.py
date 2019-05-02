@@ -12,7 +12,7 @@ with open(p.join(p.dirname(__file__), 'requirements-dev.txt'), 'r') as reqs:
 
 setup(
     name='sparkplug',
-    version='1.11.5',
+    version='1.11.6',
     maintainer='FreshBooks',
     maintainer_email='dev@freshbooks.com',
     url='https://github.com/freshbooks/sparkplug/',
@@ -58,7 +58,7 @@ setup(
         ],
         'sparkplug.time_reporters' : [
             'logger = sparkplug.timereporters.logger:Logger',
-            'ddstatsd = sparkplug.timereporters.ddstatsd:DDStatsd',
+            'statsd = sparkplug.timereporters.statsd:Statsd',
         ]
     },
 

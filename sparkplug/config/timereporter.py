@@ -53,3 +53,6 @@ class TimeReporterConfigurer(DependencyConfigurer):
     def stop(self, channel):
         if self.name in registry :
            del registry[self.name]
+
+    def __repr__(self):
+        return "TimeReporter(name={}, aggregation_count={})".format(self.name, self.aggregation_count)

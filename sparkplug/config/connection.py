@@ -24,6 +24,12 @@ which is equivalent to::
     password = guest
     # If set, forces the use of SSL to connect to the broker.
     ssl = False
+    # If set, changes the interval between reconnect attempts:
+    reconnect_delay = 10
+    # If set, overrides the default heartbeat interval (requested)
+    heartbeat = 10
+    # If set, overrides the quality-of-service message count to buffer.
+    qos = 24
 
 Sparkplug operates by starting a connection, then applying all other
 configuration directives to it (to set up queues_, exchanges_, bindings_,
