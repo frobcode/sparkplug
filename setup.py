@@ -10,6 +10,9 @@ with open(p.join(p.dirname(__file__), 'requirements-dev.txt'), 'r') as reqs:
         for line in reqs
         if not line.startswith('-r')]
 
+with open(p.join(p.dirname(__file__), 'README.md'), 'r') as f:
+    long_description = f.read()
+
 setup(
     name='sparkplug',
     version='1.11.5',
@@ -18,6 +21,8 @@ setup(
     url='https://github.com/freshbooks/sparkplug/',
     download_url='https://pypi.python.org/pypi/sparkplug/',
     description='An AMQP message consumer daemon',
+    long_description=long_description,
+    long_description_content_type="text/markdown",
 
     classifiers=[
         'Development Status :: 5 - Production/Stable',
