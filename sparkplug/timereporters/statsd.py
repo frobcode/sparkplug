@@ -56,29 +56,29 @@ try:
 
             self.tags = self._parse_tags(tags)
 
-        def _parse_tags(self,tags):
+        def _parse_tags(self, tags):
             ret = None
-            if tags :
+            if tags:
                 ret = [x.strip() for x in tags.split(',')]
             return ret
 
         def append_exec(self, delta):
             self.exec.append(delta)
-            if len(self.exec) >= self.aggregation_count :
+            if len(self.exec) >= self.aggregation_count:
                 mn, md, mx = min_median_max(self.exec)
                 del self.exec[:]
                 self.statsd.timing('msg.exec', md, tags=self.tags)
 
         def append_erro(self, delta):
             self.erro.append(delta)
-            if len(self.erro) >= self.aggregation_count :
+            if len(self.erro) >= self.aggregation_count:
                 mn, md, mx = min_median_max(self.erro)
                 del self.erro[:]
                 self.statsd.timing('msg.erro', md, tags=self.tags)
 
         def append_wait(self, delta):
             self.wait.append(delta)
-            if len(self.wait) >= self.aggregation_count :
+            if len(self.wait) >= self.aggregation_count:
                 mn, md, mx = min_median_max(self.wait)
                 del self.wait[:]
                 self.statsd.timing('msg.wait', md, tags=self.tags)
