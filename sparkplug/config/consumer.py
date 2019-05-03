@@ -13,6 +13,8 @@ sections in your configuration::
     queue = events
     # Other parameters will be passed passed to the entry point
     format = %%(body)s
+    # If set, indicates the time_reporters to use; comma-separated for >1
+    time_reporters = mylogger, myotherlogger
 
 The ``use`` parameter is used to find a ``pkg_resources`` entry point. For the
 example above, an entry point named ``echo`` in the ``sparkplug.consumers``
