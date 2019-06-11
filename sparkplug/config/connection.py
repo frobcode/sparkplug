@@ -129,15 +129,14 @@ class AMQPConnector(object):
             raise
 
     def pump(self, connection, channel):
-        timeout = connection.heartbeat * 0.4 or None
-        with MultiThreadedConnection(connection):
-            while True:
-                _log.debug("Waiting for a message.")
-                try:
-                    channel.wait(spec.Basic.Deliver, timeout=timeout)
-                except socket.timeout:
-                    _log.debug("Idle heartbeat")
-                    connection.send_heartbeat()
+        timeout = connection.heartbeat * 0.4 or None        
+        while True:
+            _log.debug("Waiting for a message.")
+            try:
+                channel.wait(spec.Basic.Deliver, timeout=timeout)
+            except socket.timeout:
+                _log.debug("Idle heartbeat")
+                connection.send_heartbeat()
 
     def run(self):
         while True:
