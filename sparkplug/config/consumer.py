@@ -51,7 +51,6 @@ To register entry points in your own egg files, use ``setuptools``'
 A complete example is included in the sparkplug source.
 """
 
-import threading
 from multiprocessing.pool import ThreadPool
 from multiprocessing import TimeoutError
 
