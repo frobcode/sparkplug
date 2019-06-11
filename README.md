@@ -17,4 +17,4 @@ git push --tags
 ```
 A new release will be automatically generated on the tag build.
 
-Version 1.11.5 and 1.11.6 are Python 2.7 and 3.x compatible.
+Version 1.11.5, 1.11.6, 1.12.0 are Python 2.7 and 3.x compatible.
