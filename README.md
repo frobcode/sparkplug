@@ -9,12 +9,8 @@ Sparkplug is a lightweight AMQP message consumer. It allows you to specify queue
 run tests with `nosetests`
 
 ## Releasing
-To create a new release commit run:
-```bash
-./bump.sh
-git push origin master
-git push --tags
-```
-A new release will be automatically generated on the tag build.
+
+```VERSION_BUMP_TYPE=minor PYPI_USER=some_user PYPI_PASS=some_password make release```
+
 
 Version 1.11.5, 1.11.6, 1.12.0 are Python 2.7 and 3.x compatible.
