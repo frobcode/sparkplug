@@ -15,7 +15,7 @@ with open(p.join(p.dirname(__file__), 'README.md'), 'r') as f:
 
 setup(
     name='sparkplug',
-    version='1.12.0',
+    version='1.13.0',
     maintainer='FreshBooks',
     maintainer_email='dev@freshbooks.com',
     url='https://github.com/freshbooks/sparkplug/',
