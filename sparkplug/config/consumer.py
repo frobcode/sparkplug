@@ -53,12 +53,14 @@ A complete example is included in the sparkplug source.
 
 from multiprocessing.pool import ThreadPool
 from multiprocessing import TimeoutError
+import traceback
 
 import pkg_resources
 from sparkplug.config import DependencyConfigurer
 from sparkplug.logutils import LazyLogger
 import sparkplug.config.timer
 from .connection import MultiThreadedConnection
+from .heartbeater import Heartbeater
 
 _log = LazyLogger(__name__)
 
@@ -78,22 +80,23 @@ def parse_use(group, use, load_entry_point=pkg_resources.load_entry_point):
     return load_entry_point(dist, group, entry_point)
 
 
-class ConsumerThread(object):
+class HeartbeatConsumer(object):
     def __init__(self, connection, consumer):
         self._consumer = consumer
         self._connection = connection
-        self._pool = ThreadPool(1)
+        self._heartbeater = Heartbeater(connection)
 
     def __call__(self, msg):
-        timeout = self._connection.heartbeat * 0.4 or None
-        result = self._pool.apply_async(self._consumer, (msg,))
-        while not result.ready():
-            try:
-                result.get(timeout=timeout)
-            except TimeoutError:
-                _log.debug("Busy heartbeat")
-                self._connection.send_heartbeat()
-        return
+        result = None
+        try:
+            with self._heartbeater:
+                result = self._consumer(msg)
+        except:
+            _log.error(traceback.format_exc())
+        return result
+
+    def __del__(self):
+        self._heartbeater.teardown()
 
 
 class ConsumerConfigurer(DependencyConfigurer):
@@ -134,17 +137,14 @@ class ConsumerConfigurer(DependencyConfigurer):
     def start(self, channel):
         _log.debug("Creating consumer from %r", self.entry_point)
         consumer = self.entry_point(channel, **self.consumer_params)
+        # Wrap the original consumer with a callable to
+        # report timing information:
+        consumer = sparkplug.config.timer.Timer(consumer, self.time_reporters)
 
-        with MultiThreadedConnection(channel.connection):
-            # Wrap the original consumer with a callable to
-            # report timing information:
-            consumer = sparkplug.config.timer.Timer(consumer, self.time_reporters)
+        # Wrap again to run busy heartbeats in a separate thread:
+        consumer = HeartbeatConsumer(channel.connection, consumer)
 
-            # Wrap again to run in a separate thread, allow main thread to handle heartbeats
-            executer = ConsumerThread(channel.connection, consumer)
-
-            _log.debug("Consuming from queue %s", self.queue)
-            channel.basic_consume(callback=executer, queue=self.queue)
+        channel.basic_consume(callback=consumer, queue=self.queue)
 
     def stop(self, channel):
         pass
