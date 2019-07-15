@@ -10,7 +10,7 @@ _log = LazyLogger(__name__)
 class HeartbeatConsumer(object):
     def __init__(self, channel):
         self.channel = channel
-        self.timeouts = ([0] * (8 * 1024)) + [0.125, 0, 1, 2, 3, 4, 0,8,16,24,16] + ([0] * (8 * 1024))
+        self.timeouts = ([0] * (8 * 1024)) + [0.125, 0, 1, 2, 3, 4, 0, 8, 16, 24, 16] + ([0] * (8 * 1024))
 
     def __call__(self, msg):
         counter = int(json.loads(msg.body))
