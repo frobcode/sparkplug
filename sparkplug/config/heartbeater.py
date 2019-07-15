@@ -15,6 +15,7 @@ class _HeartbeatThread(threading.Thread):
     for completely shutting down, which can be used
     by external entities.
     """
+
     def __init__(self, connection, event_pause, event_end):
         threading.Thread.__init__(self)
         self._pause = event_pause
@@ -24,24 +25,23 @@ class _HeartbeatThread(threading.Thread):
         self._interval = max(0.1, connection.heartbeat * 0.4)
 
     def run(self):
-        _log.debug( "Heartbeat thread is launching")
+        _log.debug("Heartbeat thread is launching")
         while not self._end.is_set():
             try:
                 # Theading.Event.wait() is EXTREMELY SLOW, ~100ms
                 # use sleep() instead, then check the state of pause after:
                 time.sleep(self._interval)
                 if not self._pause.is_set():
-                    _log.debug( "Send Heartbeat")
+                    _log.debug("Send Heartbeat")
                     self._connection.send_heartbeat()
             except:
                 _log.error(traceback.format_exc())
-                _log.debug( "Failed to send heartbeat")
+                _log.debug("Failed to send heartbeat")
                 self._end.set()
-        _log.debug( "Heartbeat thread is shutting down")
+        _log.debug("Heartbeat thread is shutting down")
 
 
-
-class Heartbeater( object ):
+class Heartbeater(object):
     """
     Context Manager
     In the scope of its context, the heartbeat thread
@@ -49,6 +49,7 @@ class Heartbeater( object ):
 
     Don't forget to call teardown() when you are finished.
     """
+
     def __init__(self, connection):
         self._connection = connection
 
@@ -61,20 +62,20 @@ class Heartbeater( object ):
             self.new_timer()
 
     def new_timer(self):
-        if self._timer :
-            paused = self._timer_pause.is_set() # push state
+        if self._timer:
+            paused = self._timer_pause.is_set()  # push state
             # set events so thread ends:
             self._timer_pause.set()
             self._timer_end.set()
             self._timer.join()
             if not paused:
-                self._timer_pause.clear() # pop state
+                self._timer_pause.clear()  # pop state
         self._timer_end.clear()
         self._timer = _HeartbeatThread(self._connection, self._timer_pause, self._timer_end)
         self._timer.start()
 
     def check_timer(self):
-        if self._timer_end.is_set() :
+        if self._timer_end.is_set():
             self.new_timer()
 
     def __enter__(self):
