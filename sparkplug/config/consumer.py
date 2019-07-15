@@ -91,7 +91,7 @@ class HeartbeatConsumer(object):
         try:
             with self._heartbeater:
                 result = self._consumer(msg)
-        except:
+        except Exception:
             _log.error(traceback.format_exc())
         return result
 

@@ -34,7 +34,7 @@ class _HeartbeatThread(threading.Thread):
                 if not self._pause.is_set():
                     _log.debug("Send Heartbeat")
                     self._connection.send_heartbeat()
-            except:
+            except Exception:
                 _log.error(traceback.format_exc())
                 _log.debug("Failed to send heartbeat")
                 self._end.set()
