@@ -32,7 +32,7 @@ class _HeartbeatThread(threading.Thread):
                 # use sleep() instead, then check the state of pause after:
                 time.sleep(self._interval)
                 if not self._pause.is_set():
-                    _log.debug("Send Heartbeat")
+                    _log.debug("Send heartbeat")
                     self._connection.send_heartbeat()
             except Exception:
                 _log.error(traceback.format_exc())
@@ -59,9 +59,9 @@ class Heartbeater(object):
         self._timer_end.clear()
         self._timer = None
         if connection.heartbeat:
-            self.new_timer()
+            self.start_new_timer()
 
-    def new_timer(self):
+    def start_new_timer(self):
         if self._timer:
             paused = self._timer_pause.is_set()  # push state
             # set events so thread ends:
@@ -74,14 +74,14 @@ class Heartbeater(object):
         self._timer = _HeartbeatThread(self._connection, self._timer_pause, self._timer_end)
         self._timer.start()
 
-    def check_timer(self):
+    def clear_timer_end(self):
         if self._timer_end.is_set():
-            self.new_timer()
+            self.start_new_timer()
 
     def __enter__(self):
         if self._timer:
             self._timer_pause.clear()
-            self.check_timer()
+            self.clear_timer_end()
         return self
 
     def __exit__(self, exc_type, exc_value, tb):
