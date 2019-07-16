@@ -10,13 +10,22 @@ services:
       - '15672:15672'
     networks:
       - sparkplug_test_net
-  cons:
+  cons1:
     image: sparkplug_tester:latest
     volumes:
      - .:/app
     depends_on:
       - "rabbitmq"
-    command: ["sh", "-c", "sleep 10; sparkplug /app/sparkplug/test/test_heartbeat/test.ini"]
+    command: ["sh", "-c", "sleep 10; sparkplug /app/sparkplug/test/test_heartbeat/single.ini"]
+    networks:
+      - sparkplug_test_net
+  cons2:
+    image: sparkplug_tester:latest
+    volumes:
+     - .:/app
+    depends_on:
+      - "rabbitmq"
+    command: ["sh", "-c", "sleep 10; sparkplug --fork 2 /app/sparkplug/test/test_heartbeat/double.ini"]
     networks:
       - sparkplug_test_net
   publ:
@@ -25,7 +34,8 @@ services:
      - .:/app
     depends_on:
       - "rabbitmq"
-      - "cons"
+      - "cons1"
+      - "cons2"
     command: ["sh", "-c", "sleep 20; python /app/sparkplug/test/test_heartbeat/publish_msgs.py"]
     networks:
       - sparkplug_test_net

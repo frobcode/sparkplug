@@ -27,8 +27,8 @@ tests: tester
 test-all : tests
 	# Do more extensive heartbeat testing:
 	# You can monitor rabbitmq in a web browser on http://127.0.0.1:15672 using guest/guest
-	# Since consumer is hard to kill, we schedule the OS to take the swarm down after 8 minutes
-	echo "docker-compose down -v --remove-orphans" | at now + 8 minutes
+	# Since consumer is hard to kill, we schedule the OS to take the swarm down after 5 minutes
+	echo "docker-compose down -v --remove-orphans" | at now + 5 minutes
 	docker-compose up
 
 bump: tester

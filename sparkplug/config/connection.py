@@ -41,8 +41,6 @@ and consumers_), then waiting for messages to be delivered.
 .. _consumers: `Consumer configuration`_
 """
 
-from __future__ import with_statement
-
 import amqp
 import time
 import socket
@@ -63,6 +61,7 @@ def _locked_call(lock, fn):
         with lock:
             r = fn(*args, **kwargs)
         return r
+
     return locked_fn
 
 
@@ -78,10 +77,9 @@ class MultiThreadedConnection(object):
     """
 
     def __init__(self, connection):
-        connection.connect()  # make sure we can access properties
-        self._lock = threading.RLock()
         self._connection = connection
         self._holds = {}
+        self._lock = threading.RLock()
 
     def __enter__(self):
         self._holds['frame_writer'] = self._connection.frame_writer
@@ -91,6 +89,7 @@ class MultiThreadedConnection(object):
         self._holds['transport._write'] = self._connection.transport._write
         self._connection.transport._write = _locked_call(self._lock, self._connection.transport._write)
         _log.debug("Connection frame_writer is serialized")
+        return self
 
     def __exit__(self, exc_type, exc_value, traceback):
         self._connection.frame_writer = self._holds['frame_writer']
@@ -98,6 +97,7 @@ class MultiThreadedConnection(object):
         self._connection.transport._write = self._holds['transport._write']
         self._holds.clear()
         _log.debug("Connection frame_writer is restored")
+        return False
 
 
 def jitter():
@@ -142,9 +142,11 @@ class AMQPConnector(object):
         while True:
             try:
                 _log.debug("Connecting to broker.")
-                with amqp.Connection(**self.connection_args) as connection:
-                    connection.connect() # populate properties
-                    channel = connection.channel()
+                connection = amqp.Connection(**self.connection_args)
+                connection.connect()  # populate properties
+                channel = connection.channel()
+                mtconnection = MultiThreadedConnection(connection)
+                with connection, mtconnection:
                     # you risk dropped tcp connections due to buffer overflow without setting qos:
                     _log.debug("Applying qos: {}".format(self.qos))
                     channel.basic_qos(0, self.qos, False)
