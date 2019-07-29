@@ -108,4 +108,7 @@ def main(
     try:
         executor(daemon_entry_point, options, conf_files)
     except (SystemExit, KeyboardInterrupt):
+        import traceback
+        traceback.print_stack()
+        traceback.print_exc()
         _log.debug("Exiting sparkplug CLI.")
