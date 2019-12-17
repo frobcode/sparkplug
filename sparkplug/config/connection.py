@@ -61,7 +61,6 @@ def _locked_call(lock, fn):
         with lock:
             r = fn(*args, **kwargs)
         return r
-
     return locked_fn
 
 
@@ -69,33 +68,42 @@ class MultiThreadedConnection(object):
     """
     Context Manager
 
-    Replaces the frame_writer on a connection
-    for the purposes of synchronizing use of the connection
-    between threads.
-
-    Also makes connection.transport _read() and _write() thread safe.
+    Replaces methods on connection, channel
+    with ones that use a shared lock; to
+    prevent the consumer and the heartbeater
+    from stepping on each other between threads.
     """
 
-    def __init__(self, connection):
+    def __init__(self, connection, channel):
         self._connection = connection
-        self._holds = {}
+        self._channel = channel
+        self._connection_hold = {}
+        self._channel_hold = {}
         self._lock = threading.RLock()
 
+    def _lock_obj(self, obj, store):
+        elements = set(dir(obj)) & set(['send_heartbeat', 'send_method'])
+        for e in elements:
+            attr = getattr(obj, e)
+            if callable(attr):
+                store[e] = attr
+                setattr(obj, e, _locked_call(self._lock, attr))
+        return
+
+    def _unlock_obj(self, obj, store):
+        for e in store:
+            setattr(obj, e, store[e])
+        store.clear()
+
     def __enter__(self):
-        self._holds['frame_writer'] = self._connection.frame_writer
-        self._connection.frame_writer = _locked_call(self._lock, self._connection.frame_writer)
-        self._holds['transport._read'] = self._connection.transport._read
-        self._connection.transport._read = _locked_call(self._lock, self._connection.transport._read)
-        self._holds['transport._write'] = self._connection.transport._write
-        self._connection.transport._write = _locked_call(self._lock, self._connection.transport._write)
+        self._lock_obj(self._connection, self._connection_hold)
+        self._lock_obj(self._channel, self._channel_hold)
         _log.debug("Connection frame_writer is serialized")
         return self
 
     def __exit__(self, exc_type, exc_value, traceback):
-        self._connection.frame_writer = self._holds['frame_writer']
-        self._connection.transport._read = self._holds['transport._read']
-        self._connection.transport._write = self._holds['transport._write']
-        self._holds.clear()
+        self._unlock_obj(self._channel, self._channel_hold)
+        self._unlock_obj(self._connection, self._connection_hold)
         _log.debug("Connection frame_writer is restored")
         return False
 
@@ -145,7 +153,7 @@ class AMQPConnector(object):
                 connection = amqp.Connection(**self.connection_args)
                 connection.connect()  # populate properties
                 channel = connection.channel()
-                mtconnection = MultiThreadedConnection(connection)
+                mtconnection = MultiThreadedConnection(connection, channel)
                 with connection, mtconnection:
                     # you risk dropped tcp connections due to buffer overflow without setting qos:
                     _log.debug("Applying qos: {}".format(self.qos))
