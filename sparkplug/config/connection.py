@@ -110,7 +110,7 @@ class MultiThreadedConnection(object):
 
 def jitter():
     "returns a quasi-random floating point value between 0 and 1"
-    return (time.process_time() * (879190747.0 ** 0.5)) % 1  # kronecker sequence
+    return (time.process_time() * (879190747.0 ** 0.5)) % 1  # uses the kronecker sequence to guarantee that values are spread out instead of potentially close together
 
 
 class AMQPConnector(object):
