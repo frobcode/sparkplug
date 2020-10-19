@@ -4,13 +4,12 @@ try:
     from configparser import ConfigParser
 except ImportError:
     # patch support for python 2.7
-    import configparter.SafeConfigParser as ConfigParser
+    import configparser.SafeConfigParser as ConfigParser
     ConfigParser.read_file = ConfigParser.readfp
 
 import optparse
 import logging
 import logging.config
-import os
 import sys
 import sparkplug.options
 import sparkplug.config
