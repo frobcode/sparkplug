@@ -15,7 +15,12 @@ class Timer(object):
 
     def __call__(self, msg):
         ret = None
-        
+
+        tags = []
+        if hasattr(msg, "application_headers") and ("producer_name" in msg.application_headers):
+            producer_name = msg.application_headers['producer_name']
+            tags.append("producer:{}".format(producer_name))
+
         try:
             start_time = datetime.datetime.now()
             if hasattr(msg, "application_headers") and ("timestamp_in_ms" in msg.application_headers):
@@ -23,7 +28,7 @@ class Timer(object):
                 wait_time = start_time - began_at
                 try:
                     for t in self._timers:
-                        t.append_wait(wait_time)
+                        t.append_wait(wait_time, tags=tags)
                 except:
                     _log.error(traceback.format_exc())
 
@@ -33,7 +38,7 @@ class Timer(object):
             try:
                 erro_time = datetime.datetime.now() - start_time
                 for t in self._timers:
-                    t.append_erro(erro_time)
+                    t.append_erro(erro_time, tags=tags)
             except:
                 _log.error(traceback.format_exc())
 
@@ -43,7 +48,7 @@ class Timer(object):
             try:
                 exec_time = datetime.datetime.now() - start_time
                 for t in self._timers:
-                    t.append_exec(exec_time)
+                    t.append_exec(exec_time, tags=tags)
             except:
                 _log.error(traceback.format_exc())
 

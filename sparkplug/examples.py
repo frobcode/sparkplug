@@ -8,7 +8,7 @@ class EchoConsumer(object):
         self.format = format
 
     def __call__(self, msg):
-        text = self.format.format(body=msg.body, pid=os.getpid())
+        text = self.format.format(body=msg.body, pid=os.getpid(), application_headers=msg.application_headers)
         print(text)
         self.channel.basic_ack(msg.delivery_tag)
 
