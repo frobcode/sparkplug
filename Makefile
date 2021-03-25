@@ -3,7 +3,7 @@
 PYTHON_DOCKER_REPO=python:latest
 PYTHON_2_DOCKER_REPO=python:2-stretch
 VERSION_BUMP_TYPE?=minor
-PYPI_HOST=https://pypi.org
+PYPI_HOST=https://upload.pypi.org/legacy/
 PYPI_INDEX?=$(PYPI_HOST)/project/sparkplug
 
 wheel:
@@ -70,7 +70,7 @@ release: guard-PYPI_USER guard-PYPI_PASS bump-version release-python2
 		-v $(shell pwd):/usr/src/code \
 		-w /usr/src/code \
 		-e PYPI_USER=$(PYPI_USER) -e PYPI_PASS=$(PYPI_PASS) \
-		-e PYPI_INDEX=$(PYPI_INDEX) \
+		-e PYPI_HOST=$(PYPI_HOST) \
 		$(PYTHON_DOCKER_REPO) \
 		/usr/src/code/scripts/release.sh
 
@@ -88,6 +88,6 @@ release-python2: guard-PYPI_USER guard-PYPI_PASS
 		-v $(shell pwd):/usr/src/code \
 		-w /usr/src/code \
 		-e PYPI_USER=$(PYPI_USER) -e PYPI_PASS=$(PYPI_PASS) \
-		-e PYPI_INDEX=$(PYPI_INDEX) \
+		-e PYPI_HOST=$(PYPI_HOST) \
 		$(PYTHON_2_DOCKER_REPO) \
 		/usr/src/code/scripts/release.sh
