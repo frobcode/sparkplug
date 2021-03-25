@@ -4,7 +4,6 @@ PYTHON_DOCKER_REPO=python:latest
 PYTHON_2_DOCKER_REPO=python:2-stretch
 VERSION_BUMP_TYPE?=minor
 PYPI_HOST=https://upload.pypi.org/legacy/
-PYPI_INDEX?=$(PYPI_HOST)/project/sparkplug
 
 wheel:
 	python setup.py sdist bdist_wheel
