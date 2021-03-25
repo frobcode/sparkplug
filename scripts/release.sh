@@ -10,4 +10,4 @@ ls -l dist
 # Push
 export TWINE_USERNAME=${PYPI_USER}
 export TWINE_PASSWORD=${PYPI_PASS}
-twine upload --verbose  --repository-url ${PYPI_HOST} --non-interactive dist/*
+twine upload --verbose  --repository-url ${PYPI_HOST} dist/*
