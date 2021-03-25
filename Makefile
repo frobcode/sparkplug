@@ -1,4 +1,4 @@
-.PHONY: shell build install test clean release release-python2
+.PHONY: shell build install test clean release
 
 PYTHON_DOCKER_REPO=python:latest
 PYTHON_2_DOCKER_REPO=python:2-stretch
@@ -38,9 +38,6 @@ bump: tester
 shell:
 	docker run -it -v $(shell pwd):/usr/src/code -w /usr/src/code python:latest bash
 
-shell-python2:
-	docker run -it -v $(shell pwd):/usr/src/code -w /usr/src/code python:2-stretch bash
-
 build: clean
 	python setup.py sdist
 	python setup.py bdist_wheel
@@ -65,7 +62,7 @@ guard-%:
 		exit 1; \
 	fi;
 
-release: guard-PYPI_USER guard-PYPI_PASS bump-version release-python2
+release: guard-PYPI_USER guard-PYPI_PASS bump-version
 	docker run -it \
 		-v $(shell pwd):/usr/src/code \
 		-w /usr/src/code \
@@ -82,12 +79,3 @@ bump-version:
 		-e VERSION_BUMP_TYPE=minor \
 		$(PYTHON_DOCKER_REPO) \
 		/usr/src/code/scripts/bump-version.sh
-
-release-python2: guard-PYPI_USER guard-PYPI_PASS
-	docker run -it \
-		-v $(shell pwd):/usr/src/code \
-		-w /usr/src/code \
-		-e PYPI_USER=$(PYPI_USER) -e PYPI_PASS=$(PYPI_PASS) \
-		-e PYPI_HOST=$(PYPI_HOST) \
-		$(PYTHON_2_DOCKER_REPO) \
-		/usr/src/code/scripts/release.sh
