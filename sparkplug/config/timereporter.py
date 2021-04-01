@@ -34,8 +34,10 @@ def parse_use(group, use, load_entry_point=pkg_resources.load_entry_point):
 
 
 class TimeReporterConfigurer(DependencyConfigurer):
-    def __init__(self, name, use, **kwargs):
+    def __init__(self, name, use, aggregation_count=None, **kwargs):
         DependencyConfigurer.__init__(self)
+        # aggregation_count is ignored and can be dropped for future versions.
+
         self.entry_point = parse_use('sparkplug.time_reporters', use)
         self.name = name
         self.kwargs = kwargs
