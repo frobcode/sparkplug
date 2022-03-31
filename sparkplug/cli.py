@@ -1,4 +1,7 @@
 from __future__ import with_statement
+import signal
+
+from sparkplug import SignalHandler
 
 try:
     from configparser import ConfigParser
@@ -85,6 +88,9 @@ def run_sparkplug(
         options.connector,
         options.connection
     )
+
+    signal.signal(signal.SIGINT, SignalHandler.signal_handler)
+    signal.signal(signal.SIGTERM, SignalHandler.signal_handler)
 
     try:
         _log.info("Starting sparkplug.")

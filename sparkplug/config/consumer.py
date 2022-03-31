@@ -51,6 +51,7 @@ To register entry points in your own egg files, use ``setuptools``'
 A complete example is included in the sparkplug source.
 """
 
+from sparkplug import SignalHandler
 from multiprocessing.pool import ThreadPool
 from multiprocessing import TimeoutError
 import traceback
@@ -87,6 +88,9 @@ class HeartbeatConsumer(object):
         self._heartbeater = Heartbeater(connection)
 
     def __call__(self, msg):
+        if SignalHandler.should_terminate:
+            _log.warning("Terminating Gracefully")
+            raise SystemExit
         result = None
         try:
             with self._heartbeater:
