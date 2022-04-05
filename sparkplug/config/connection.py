@@ -46,6 +46,7 @@ import time
 import socket
 import threading
 
+from sparkplug import SignalHandler
 from sparkplug.config.types import convert, parse_bool
 from sparkplug.logutils import LazyLogger
 from amqp import spec
@@ -140,6 +141,9 @@ class AMQPConnector(object):
     def pump(self, connection, channel):
         timeout = connection.heartbeat * 0.4 or None
         while True:
+            if SignalHandler.should_terminate:
+                _log.warning("Terminating Gracefully")
+                raise SystemExit
             _log.debug("Waiting for a message.")
             try:
                 channel.wait(spec.Basic.Deliver, timeout=timeout)
