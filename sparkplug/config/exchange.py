@@ -40,20 +40,20 @@ _log = LazyLogger(__name__)
 class ExchangeConfigurer(DependencyConfigurer):
     def __init__(self, name, type, **kwargs):
         DependencyConfigurer.__init__(self)
-        
+
         self.exchange = name
         self.type = type
-        
+
         create_args = dict(kwargs)
         convert(create_args, 'durable', parse_bool)
         convert(create_args, 'auto_delete', parse_bool)
         convert(create_args, 'internal', parse_bool)
         convert(create_args, 'passive', parse_bool)
         self.create_args = create_args
-    
+
     def start(self, channel):
         _log.debug("Declaring %s exchange %s (%r)", self.type, self.exchange, self.create_args)
-        
+
         channel.exchange_declare(
             exchange=self.exchange,
             type=self.type,

@@ -15,15 +15,25 @@ def parse_bool(value):
         False
         >>> parse_bool("True")
         True
+        >>> parse_bool("false")
+        False
+        >>> parse_bool("true")
+        True
         >>> parse_bool(False)
         False
         >>> parse_bool(True)
         True
     """
-    return bool({
-        'True': True,
-        'False': False
-    }.get(value, value))
+
+    if isinstance(value, str) and value:
+        if value.lower() in ("true", "t", "1"):
+            return True
+        elif value.lower() in ("false", "f", "0"):
+            return False
+    elif isinstance(value, bool):
+        return value
+
+    raise ValueError(f"Invalid literal for boolean: '{value}'")
 
 
 def parse_dict(value):
